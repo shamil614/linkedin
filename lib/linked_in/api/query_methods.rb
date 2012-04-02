@@ -23,6 +23,14 @@ module LinkedIn
         simple_query(path, options)
       end
 
+      # send message to linkedin connections
+      # options should be a hash like this:
+      # options = {:recipients => {:values => [:person => {:_path => "/people/~" }, :person => {:_path => "/people/USER_ID"} ]}, :subject => "Something",:body => "To read" }
+      def send_message(message = {})
+        path = "/people/~/mailbox"
+        post(path, message.to_json, "Content-Type" => "application/json")
+      end
+
       private
 
         def simple_query(path, options={})
@@ -33,7 +41,7 @@ module LinkedIn
           elsif fields
             path +=":(#{fields.map{ |f| f.to_s.gsub("_","-") }.join(',')})"
           end
-          
+
           headers = options.delete(:headers) || {}
           params  = options.map { |k,v| "#{k}=#{v}" }.join("&")
           path   += "?#{params}" if not params.empty?
@@ -71,3 +79,4 @@ module LinkedIn
 
   end
 end
+
