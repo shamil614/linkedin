@@ -1,8 +1,8 @@
 module LinkedIn
 
   module Search
+    # limitation found with search method - multiple facet params are required but hash only allows for unqique keys
     def search(options={}, type='people')
-
       path = "/#{type.to_s}-search"
 
       if options.is_a?(Hash)
@@ -13,7 +13,10 @@ module LinkedIn
       options = { :keywords => options } if options.is_a?(String)
       options = format_options_for_query(options)
 
-      result_json = get(to_uri(path, options))
+      puts to_uri(path, options) + '&facet=network%2CF'
+
+      # forces serach to use facet for 1st degree connetions
+      result_json = get(to_uri(path, options) + '&facet=network%2CF')
 
       Mash.from_json(result_json)
     end
@@ -54,3 +57,4 @@ module LinkedIn
   end
 
 end
+
